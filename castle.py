@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from dimensions import *
+from maze import Maze, directions, NORTH, SOUTH, EAST, WEST
 import mcpi.minecraft as minecraft
 import mcpi.block as block
 from threading import Thread
@@ -51,6 +52,9 @@ def create_grounds(moatwidth, moatdepth, islandwidth):
     # Set lower half of world to dirt with a layer of grass
     mc.setBlocks(x_min, -1, z_min, x_max, y_min, z_max, block.DIRT)
     mc.setBlocks(x_min, 0, z_min, x_max, 0, z_max, block.GRASS)
+    create_labyrinth()
+    # Clear maze from moat in to center
+    mc.setBlocks(-moatwidth, 0, -moatwidth, moatwidth, y_max, moatwidth, block.AIR)
     # Create water moat
     mc.setBlocks(-moatwidth, 0, -moatwidth, moatwidth, -moatdepth, moatwidth, block.WATER)
     # Replace the ground under the castle
@@ -118,6 +122,26 @@ def create_windows(x, y, z, direction):
     mc.setBlock(x2, y - 1, z2, 109, a)
 
 
+def create_labyrinth(material=block.LEAVES):
+    """Generates and renders a labyrinth."""
+    c_len, c_height = 5, 3
+    x_width, z_width = x_max - x_min,  z_max - z_min
+    x_cells, z_cells = x_width / c_len, z_width / c_len
+    maze = Maze.generate(z_cells, x_cells)
+    for cell_x in xrange(0, x_cells):
+        for cell_z in xrange(0, z_cells):
+            walls = maze[cell_z, cell_x].walls
+            north, west = x_min + cell_x * c_len, z_min + cell_z * c_len
+            if walls[NORTH]:
+                mc.setBlocks(north, 1, west, north, c_height + 1, west + c_len, material)
+            if walls[SOUTH]:
+                mc.setBlocks(north + c_len, 1, west, north + c_len, c_height + 1, west + c_len, material)
+            if walls[EAST]:
+                mc.setBlocks(north, 1, west + c_len, north + c_len, c_height + 1, west + c_len, material)
+            if walls[WEST]:
+                mc.setBlocks(north, 1, west, north + c_len, c_height + 1, west, material)
+
+
 def build_kingdom():
 
     mc.postToChat('Building kingdom, this may take a while...')
@@ -141,9 +165,11 @@ def build_kingdom():
         mc.setBlocks(0, 0, 6, 0, 0, 7, block.COBBLESTONE)
         # Creates gateways
         mc.setBlocks(13, 1, -1, 23, 3, 1, block.AIR)
-        # Position player
-        mc.player.setPos(0, 30, 4)
-        mc.postToChat('Construction complete!')
+        # Add our treasure
+        mc.setBlock(4, 21, 0, block.CHEST.withData(4))
+        # Position player at the middle of the southern boundary
+        mc.player.setPos(x_max - 2, 25, (z_min + z_max) / 2)
+        mc.postToChat('Construction complete. Find treasure in the castle!')
 
     build_thread = Thread(target=build_it)
     build_thread.start()
