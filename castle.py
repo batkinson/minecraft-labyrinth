@@ -127,7 +127,13 @@ def create_labyrinth(material=block.LEAVES):
     c_len, c_height = 5, 3
     x_width, z_width = x_max - x_min,  z_max - z_min
     x_cells, z_cells = x_width / c_len, z_width / c_len
-    maze = Maze.generate(z_cells, x_cells)
+    maze = Maze(z_cells, x_cells)
+    blk_x, blk_z = (x_cells - 13) / 2, (z_cells - 13) / 2
+    for bx in xrange(blk_x, blk_x + 13):
+        for bz in xrange(blk_z, blk_z + 13):
+            maze[bz, bx].disconnect()
+    maze.generate()
+    maze[blk_z + 6, blk_x + 13].remove_wall(NORTH)
     for cell_x in xrange(0, x_cells):
         for cell_z in xrange(0, z_cells):
             walls = maze[cell_z, cell_x].walls
@@ -168,7 +174,7 @@ def build_kingdom():
         # Add our treasure
         mc.setBlock(4, 21, 0, block.CHEST.withData(4))
         # Position player at the middle of the southern boundary
-        mc.player.setPos(x_max - 2, 25, (z_min + z_max) / 2)
+        mc.player.setPos(x_min + 2, 25, (z_min + z_max) / 2)
         mc.postToChat('Construction complete. Find treasure in the castle!')
 
     build_thread = Thread(target=build_it)

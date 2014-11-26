@@ -23,6 +23,11 @@ class Cell(object):
                 self._adjacent_cells.add(self[d])
                 self.adjacent_directions[self[d]] = d
 
+    def disconnect(self):
+        """Disconnects this cell from its adjacent cells."""
+        for cell in self.adjacent_cells():
+            cell.adjacent_cells().remove(self)
+
     def remove_wall(self, direction):
         """Removes the wall in the specified direction from cells on both sides."""
         self.walls[direction] = False
@@ -76,11 +81,9 @@ class Maze(object):
         else:
             return self.cells[row][col]
 
-    @staticmethod
-    def generate(width, height):
+    def generate(self, init_cell=(0, 0)):
         """Randomly generates a maze from start to cell"""
-        maze = Maze(width=width, height=height)
-        start = maze[0,0]
+        start = self[init_cell]
         in_maze = set([start])
         adj_cells = set()
         adj_cells.update(start.adjacent_cells())
@@ -93,7 +96,7 @@ class Maze(object):
             pick.remove_wall(pick.adjacent_direction(connecting_cell))
             adj_cells.remove(pick)
             adj_cells.update(pick_adjs)
-        return maze
+        return self
 
     def __str__(self):
         """Converts the maze into a string."""
