@@ -1,15 +1,16 @@
 from mcpi import minecraft, block
 
-m = minecraft.Minecraft.create(address='checkers.local')
+mc = minecraft.Minecraft.create(address='checkers.local')
 
 MAX_DIM = 256
 BOUNDARY = block.BEDROCK_INVISIBLE.id
 
 __all__ = ['x_min', 'x_max', 'z_min', 'z_max', 'y_min', 'y_max', 'x_center', 'z_center']
 
+
 def is_boundary(x, y, z):
     """True if the block at x,y,z is invisible bedrock."""
-    return m.getBlock(x, y, z) == BOUNDARY
+    return mc.getBlock(x, y, z) == BOUNDARY
 
 
 def find_x_max(start=0, end=MAX_DIM):
@@ -58,12 +59,12 @@ def find_z_min(start=0, end=-MAX_DIM):
 
 def x_dim():
     """Returns the usable x dimensions as a tuple, (min, max)."""
-    return (find_x_min(), find_x_max())
+    return find_x_min(), find_x_max()
 
 
 def z_dim():
     """Returns the usable z dimensions as a tuple, (min, max)."""
-    return (find_z_min(), find_z_max())
+    return find_z_min(), find_z_max()
 
 
 x_min, x_max = x_dim()
@@ -78,8 +79,8 @@ x_center, z_center = (x_min + x_max) / 2, (z_min + z_max) / 2
 def mark_boundary(material=block.GLOWING_OBSIDIAN):
     """Marks the x/z boundary of the world."""
     for x in xrange(x_min + 1, x_max):
-        m.setBlock(x, m.getHeight(x, z_max) - 1, z_max, material)
-        m.setBlock(x, m.getHeight(x, z_min) - 1, z_min, material)
+        mc.setBlock(x, mc.getHeight(x, z_max) - 1, z_max, material)
+        mc.setBlock(x, mc.getHeight(x, z_min) - 1, z_min, material)
     for z in xrange(z_min, z_max + 1):
-        m.setBlock(x_max, m.getHeight(x_max, z) - 1, z, material)
-        m.setBlock(x_min, m.getHeight(x_min, z) - 1, z, material)
+        mc.setBlock(x_max, mc.getHeight(x_max, z) - 1, z, material)
+        mc.setBlock(x_min, mc.getHeight(x_min, z) - 1, z, material)

@@ -176,5 +176,3 @@ def build_kingdom():
     build_thread.join()
 
 
-
-
