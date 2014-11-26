@@ -54,9 +54,9 @@ def create_grounds(moatwidth, moatdepth, islandwidth):
     mc.setBlocks(x_min, 0, z_min, x_max, 0, z_max, block.GRASS)
     create_labyrinth()
     # Clear maze from moat in to center
-    mc.setBlocks(-moatwidth, 0, -moatwidth, moatwidth, y_max, moatwidth, block.AIR)
+    mc.setBlocks(-moatwidth, 0, -moatwidth, moatwidth-1, y_max, moatwidth-1, block.AIR)
     # Create water moat
-    mc.setBlocks(-moatwidth, 0, -moatwidth, moatwidth, -moatdepth, moatwidth, block.WATER)
+    mc.setBlocks(-moatwidth, 0, -moatwidth, moatwidth-1, -moatdepth, moatwidth-1, block.WATER)
     # Replace the ground under the castle
     mc.setBlocks(-islandwidth, -1, -islandwidth, islandwidth, -moatdepth, islandwidth, block.DIRT)
     mc.setBlocks(-islandwidth, 0, -islandwidth, islandwidth, 0, islandwidth, block.GRASS)
@@ -148,7 +148,7 @@ def build_kingdom():
     sleep(.5)
 
     def build_it():
-        create_grounds(33, 10, 23)
+        create_grounds(32, 10, 23)
         create_walls(21, 0, 5)
         create_walls(13, 0, 6)
         create_keep()
