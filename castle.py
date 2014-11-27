@@ -182,6 +182,46 @@ def build_kingdom():
     build_thread.join()
 
 
+class ExplodingBlock(Thread):
+
+    """Manages making a TNT block explode."""
+
+    def __init__(self, x, y, z, fuse_delay, blast_radius):
+        Thread.__init__(self)
+        self.x, self.y, self.z = x, y, z
+        self.fuse_delay = fuse_delay
+        self.blast_radius = blast_radius
+        self.blink_pause = 0.25
+
+    @staticmethod
+    def explode(x, y, z, fuse=3, radius=3):
+        exp_block = ExplodingBlock(x, y, z, fuse, radius)
+        exp_block.daemon = True
+        exp_block.start()
+
+    def run(self):
+        conn = get_conn()
+        x, y, z = self.x, self.y, self.z
+        blast_radius = self.blast_radius
+
+        # The fuse
+        for fuse in xrange(0, self.fuse_delay):
+            conn.setBlock(x, y, z, block.AIR)
+            sleep(self.blink_pause)
+            conn.setBlock(x, y, z, block.TNT)
+            sleep(self.blink_pause)
+
+        blasts = [(x, y, z)]
+
+        # The blast
+        while blasts:
+            x, y, z = blasts.pop(0)
+            for bxo in xrange(blast_radius * -1, blast_radius):
+                for byo in xrange(blast_radius * -1, blast_radius):
+                    for bzo in xrange(blast_radius * -1, blast_radius):
+                        if bxo ** 2 + byo ** 2 + bzo ** 2 < blast_radius ** 2:
+                            bx, by, bz = x + bxo, y + byo, z + bzo
+                            conn.setBlock(bx, by, bz, block.AIR)
 
 
 if __name__ == "__main__":
@@ -194,6 +234,9 @@ if __name__ == "__main__":
                     hit_block = mc.getBlockWithData(hit_event.pos)
                     if hit_block.id == block.CHEST.id:
                         build_kingdom()
+                    elif hit_block.id == block.TNT.id:
+                        hp = hit_event.pos
+                        ExplodingBlock.explode(hp.x, hp.y, hp.z)
         sleep(0.1)
     except KeyboardInterrupt:
         print("exiting")
