@@ -182,3 +182,20 @@ def build_kingdom():
     build_thread.join()
 
 
+
+
+if __name__ == "__main__":
+    build_kingdom()
+    try:
+        while True:
+            hit_events = mc.events.pollBlockHits()
+            if hit_events:
+                for hit_event in hit_events:
+                    hit_block = mc.getBlockWithData(hit_event.pos)
+                    if hit_block.id == block.CHEST.id:
+                        build_kingdom()
+        sleep(0.1)
+    except KeyboardInterrupt:
+        print("exiting")
+
+
