@@ -122,7 +122,7 @@ def create_windows(x, y, z, direction):
     mc.setBlock(x2, y - 1, z2, 109, a)
 
 
-def create_labyrinth(material=block.LEAVES):
+def create_labyrinth(material=block.LEAVES.withData(1)):
     """Generates and renders a labyrinth."""
     c_len, c_height = 5, 3
     x_width, z_width = x_max - x_min,  z_max - z_min
