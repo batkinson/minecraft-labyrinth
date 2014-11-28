@@ -6,6 +6,53 @@ DIRECTIONS = [NORTH, SOUTH, EAST, WEST]
 OPPOSING_DIRECTIONS = {NORTH: SOUTH, SOUTH: NORTH, EAST: WEST, WEST: EAST}
 
 
+class Maze(object):
+    """A randomly generated, abstract maze."""
+    def __init__(self, width=5, height=10):
+        self.width, self.height = width, height
+        self.cells = [[Cell(row, col, self) for col in xrange(width)] for row in xrange(height)]
+        for col in xrange(width):
+            for row in xrange(height):
+                self[col, row].init_adjacents()
+
+    def __getitem__(self, colrow):
+        """Takes a tuple in the form of (row,col) and returns the given cell, or None"""
+        col, row = colrow
+        if row < 0 or row >= self.height or col < 0 or col >= self.width:
+            return None
+        else:
+            return self.cells[row][col]
+
+    def generate(self, init_cell=(0, 0)):
+        """Randomly generates a maze from start to cell"""
+        start = self[init_cell]
+        in_maze = set([start])
+        adj_cells = set()
+        adj_cells.update(start.adjacent_cells())
+
+        while adj_cells.difference(in_maze):
+            pick = choice(tuple(adj_cells.difference(in_maze)))
+            in_maze.add(pick)
+            pick_adjs = pick.adjacent_cells()
+            connecting_cell = choice(tuple(pick_adjs.intersection(in_maze)))
+            pick.remove_wall(pick.adjacent_direction(connecting_cell))
+            adj_cells.remove(pick)
+            adj_cells.update(pick_adjs)
+        return self
+
+    def __str__(self):
+        """Converts the maze into a string."""
+        result = ''
+        for row in xrange(self.height):
+            for col in xrange(self.width):
+                result += str(self.cells[row][col])
+            result += "\n"
+        return result
+
+    def __repr__(self):
+        return self.__str__()
+
+
 class Cell(object):
     """A single node in a maze graph."""
     def __init__(self, row, col, maze):
@@ -59,53 +106,6 @@ class Cell(object):
             else:
                 result += ' '
         return result + ']'
-
-    def __repr__(self):
-        return self.__str__()
-
-
-class Maze(object):
-    """A randomly generated, abstract maze."""
-    def __init__(self, width=5, height=10):
-        self.width, self.height = width, height
-        self.cells = [[Cell(row, col, self) for col in xrange(width)] for row in xrange(height)]
-        for col in xrange(width):
-            for row in xrange(height):
-                self[col, row].init_adjacents()
-
-    def __getitem__(self, colrow):
-        """Takes a tuple in the form of (row,col) and returns the given cell, or None"""
-        col, row = colrow
-        if row < 0 or row >= self.height or col < 0 or col >= self.width:
-            return None
-        else:
-            return self.cells[row][col]
-
-    def generate(self, init_cell=(0, 0)):
-        """Randomly generates a maze from start to cell"""
-        start = self[init_cell]
-        in_maze = set([start])
-        adj_cells = set()
-        adj_cells.update(start.adjacent_cells())
-
-        while adj_cells.difference(in_maze):
-            pick = choice(tuple(adj_cells.difference(in_maze)))
-            in_maze.add(pick)
-            pick_adjs = pick.adjacent_cells()
-            connecting_cell = choice(tuple(pick_adjs.intersection(in_maze)))
-            pick.remove_wall(pick.adjacent_direction(connecting_cell))
-            adj_cells.remove(pick)
-            adj_cells.update(pick_adjs)
-        return self
-
-    def __str__(self):
-        """Converts the maze into a string."""
-        result = ''
-        for row in xrange(self.height):
-            for col in xrange(self.width):
-                result += str(self.cells[row][col])
-            result += "\n"
-        return result
 
     def __repr__(self):
         return self.__str__()
