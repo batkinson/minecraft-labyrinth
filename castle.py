@@ -234,10 +234,10 @@ if __name__ == "__main__":
             hit_events = mc.events.pollBlockHits()
             if hit_events:
                 for hit_event in hit_events:
-                    hit_block = mc.getBlockWithData(hit_event.pos)
-                    if hit_block.id == block.CHEST.id:
+                    hit_block = mc.getBlock(hit_event.pos)
+                    if hit_block == block.CHEST.id:
                         build_kingdom()
-                    elif hit_block.id == block.TNT.id:
+                    elif hit_block == block.TNT.id:
                         hp = hit_event.pos
                         ExplodingBlock.explode(hp.x, hp.y, hp.z)
         sleep(0.1)
