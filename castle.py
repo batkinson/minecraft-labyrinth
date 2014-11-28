@@ -116,9 +116,9 @@ def create_windows(x, y, z, direction):
 
 def create_labyrinth(material=block.LEAVES.withData(1)):
     """Generates and renders a labyrinth."""
-    c_len, c_height = 5, 3
+    c_dim, c_height = 5, 3
     x_width, z_width = x_max - x_min,  z_max - z_min
-    x_cells, z_cells = x_width / c_len, z_width / c_len
+    x_cells, z_cells = x_width / c_dim, z_width / c_dim
     maze = Maze(z_cells, x_cells)
     blk_x, blk_z = (x_cells - 13) / 2, (z_cells - 13) / 2
     for bx in xrange(blk_x, blk_x + 13):
@@ -129,18 +129,18 @@ def create_labyrinth(material=block.LEAVES.withData(1)):
     for cell_x in xrange(0, x_cells):
         for cell_z in xrange(0, z_cells):
             walls = maze[cell_z, cell_x].walls
-            north, west = x_min + cell_x * c_len, z_min + cell_z * c_len
+            north, west = x_min + cell_x * c_dim, z_min + cell_z * c_dim
             if walls[NORTH] and walls[SOUTH] and walls[EAST] and walls[WEST]:
-                mc.setBlocks(north, 1, west, north + c_len, c_height + 1, west + c_len, material)
+                mc.setBlocks(north, 1, west, north + c_dim, c_height + 1, west + c_dim, material)
             else:
                 if walls[NORTH]:
-                    mc.setBlocks(north, 1, west, north, c_height + 1, west + c_len, material)
+                    mc.setBlocks(north, 1, west, north, c_height + 1, west + c_dim, material)
                 if walls[SOUTH]:
-                    mc.setBlocks(north + c_len, 1, west, north + c_len, c_height + 1, west + c_len, material)
+                    mc.setBlocks(north + c_dim, 1, west, north + c_dim, c_height + 1, west + c_dim, material)
                 if walls[EAST]:
-                    mc.setBlocks(north, 1, west + c_len, north + c_len, c_height + 1, west + c_len, material)
+                    mc.setBlocks(north, 1, west + c_dim, north + c_dim, c_height + 1, west + c_dim, material)
                 if walls[WEST]:
-                    mc.setBlocks(north, 1, west, north + c_len, c_height + 1, west, material)
+                    mc.setBlocks(north, 1, west, north + c_dim, c_height + 1, west, material)
 
 
 def build_kingdom():
