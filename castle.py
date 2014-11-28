@@ -68,7 +68,7 @@ def create_keep(size=5, baseheight=0, levels=4):
 
     height = (levels * 5) + 5
 
-    create_walls(size, baseheight, height, block.STONE_BRICK, True, True)
+    create_walls(size, baseheight, height)
 
     # Floors & Windows
     for level in range(1, levels + 1):
