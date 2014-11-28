@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from dimensions import *
-from maze import Maze, directions, NORTH, SOUTH, EAST, WEST
+from maze import Maze, NORTH, SOUTH, EAST, WEST
 import mcpi.minecraft as minecraft
 import mcpi.block as block
 from threading import Thread
@@ -138,14 +138,17 @@ def create_labyrinth(material=block.LEAVES.withData(1)):
         for cell_z in xrange(0, z_cells):
             walls = maze[cell_z, cell_x].walls
             north, west = x_min + cell_x * c_len, z_min + cell_z * c_len
-            if walls[NORTH]:
-                mc.setBlocks(north, 1, west, north, c_height + 1, west + c_len, material)
-            if walls[SOUTH]:
-                mc.setBlocks(north + c_len, 1, west, north + c_len, c_height + 1, west + c_len, material)
-            if walls[EAST]:
-                mc.setBlocks(north, 1, west + c_len, north + c_len, c_height + 1, west + c_len, material)
-            if walls[WEST]:
-                mc.setBlocks(north, 1, west, north + c_len, c_height + 1, west, material)
+            if walls[NORTH] and walls[SOUTH] and walls[EAST] and walls[WEST]:
+                mc.setBlocks(north, 1, west, north + c_len, c_height + 1, west + c_len, material)
+            else:
+                if walls[NORTH]:
+                    mc.setBlocks(north, 1, west, north, c_height + 1, west + c_len, material)
+                if walls[SOUTH]:
+                    mc.setBlocks(north + c_len, 1, west, north + c_len, c_height + 1, west + c_len, material)
+                if walls[EAST]:
+                    mc.setBlocks(north, 1, west + c_len, north + c_len, c_height + 1, west + c_len, material)
+                if walls[WEST]:
+                    mc.setBlocks(north, 1, west, north + c_len, c_height + 1, west, material)
 
 
 def build_kingdom():
