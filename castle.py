@@ -119,13 +119,15 @@ def create_labyrinth(material=block.LEAVES.withData(1)):
     c_dim, c_height = 5, 3
     x_width, z_width = x_max - x_min,  z_max - z_min
     x_cells, z_cells = x_width / c_dim, z_width / c_dim
+    castle_cells = 13
     maze = Maze(z_cells, x_cells)
-    blk_x, blk_z = (x_cells - 13) / 2, (z_cells - 13) / 2
-    for bx in xrange(blk_x, blk_x + 13):
-        for bz in xrange(blk_z, blk_z + 13):
+    # Remove cells that will overlap with castle from maze generation (assumes 0,0 is centered)
+    blk_x, blk_z = (x_cells - castle_cells) / 2, (z_cells - castle_cells) / 2
+    for bx in xrange(blk_x, blk_x + castle_cells):
+        for bz in xrange(blk_z, blk_z + castle_cells):
             maze[bz, bx].disconnect()
     maze.generate()
-    maze[blk_z + 6, blk_x + 13].remove_wall(NORTH)
+    maze[blk_z + castle_cells / 2, blk_x + castle_cells].remove_wall(NORTH)
     for cell_x in xrange(0, x_cells):
         for cell_z in xrange(0, z_cells):
             walls = maze[cell_z, cell_x].walls
