@@ -14,38 +14,30 @@ def get_conn():
 mc = get_conn()
 
 
-def create_walls(size, baseheight, height, material=block.STONE_BRICK, battlements=True, walkway=True):
+def create_walls(size, base_height, height, material=block.STONE_BRICK):
 
-    """Creates four walls."""
+    """Creates four walls with battlements, walkways and ladders."""
 
-    mc.setBlocks(-size, baseheight + 1, -size, size, baseheight + height, -size, material)
-    mc.setBlocks(-size, baseheight + 1, -size, -size, baseheight + height, size, material)
-    mc.setBlocks(size, baseheight + 1, size, -size, baseheight + height, size, material)
-    mc.setBlocks(size, baseheight + 1, size, size, baseheight + height, -size, material)
+    # Four walls
+    mc.setBlocks(-size, base_height + 1, -size, size, base_height + height + 1, size, material)
+    mc.setBlocks(-size + 1, base_height + 1, -size + 1, size - 1, base_height + height + 1, size - 1, block.AIR)
 
-    # Add battlements to top edge
-    if battlements:
-        for x in range(0, (2 * size) + 1, 2):
-            mc.setBlock(size, baseheight + height + 1, (x - size), material)
-            mc.setBlock(-size, baseheight + height + 1, (x - size), material)
-            mc.setBlock((x - size), baseheight + height + 1, size, material)
-            mc.setBlock((x - size), baseheight + height + 1, -size, material)
+    # Carve battlements
+    for x in range(1, 2 * size, 2):
+        mc.setBlocks(-size + x, base_height + height + 1, -size, -size + x, base_height + height + 1, size, block.AIR)
+        mc.setBlocks(-size, base_height + height + 1, -size + x, size, base_height + height + 1, -size + x, block.AIR)
 
-    # Add wooden walkways
-    if walkway:
-        mc.setBlocks(-size + 1, baseheight + height - 1, size - 1, size - 1, baseheight + height - 1, size - 1,
-                     block.WOOD_PLANKS)
-        mc.setBlocks(-size + 1, baseheight + height - 1, -size + 1, size - 1, baseheight + height - 1, -size + 1,
-                     block.WOOD_PLANKS)
-        mc.setBlocks(-size + 1, baseheight + height - 1, -size + 1, -size + 1, baseheight + height - 1, size - 1,
-                     block.WOOD_PLANKS)
-        mc.setBlocks(size - 1, baseheight + height - 1, -size + 1, size - 1, baseheight + height - 1, size - 1,
-                     block.WOOD_PLANKS)
-        # Add ladder to access walkway
-        mc.setBlocks(-size + 1, baseheight + 1, 0, -size + 1, baseheight + height, 0, block.LADDER.withData(5))
+    # Battlement walks
+    mc.setBlocks(-size + 1, base_height + height - 1, -size + 1, size - 1, base_height + height - 1, size - 1,
+                 block.WOOD_PLANKS)
+    mc.setBlocks(-size + 2, base_height + height - 1, -size + 2, size - 2, base_height + height - 1, size - 2,
+                 block.AIR)
+
+    # Battlement walk ladder
+    mc.setBlocks(-size + 1, base_height + 1, 0, -size + 1, base_height + height, 0, block.LADDER.withData(5))
 
 
-def create_grounds(moatwidth, moatdepth, islandwidth):
+def create_grounds(moat_width, moat_depth, island_width):
 
     # Set upper half to air
     mc.setBlocks(x_min, 1, z_min, x_max, y_max, z_max, block.AIR)
@@ -54,38 +46,38 @@ def create_grounds(moatwidth, moatdepth, islandwidth):
     mc.setBlocks(x_min, 0, z_min, x_max, 0, z_max, block.GRASS)
     create_labyrinth()
     # Clear maze from moat in to center
-    mc.setBlocks(-moatwidth, 0, -moatwidth, moatwidth-1, y_max, moatwidth-1, block.AIR)
+    mc.setBlocks(-moat_width, 0, -moat_width, moat_width-1, y_max, moat_width-1, block.AIR)
     # Create water moat
-    mc.setBlocks(-moatwidth, 0, -moatwidth, moatwidth-1, -moatdepth, moatwidth-1, block.WATER)
+    mc.setBlocks(-moat_width, 0, -moat_width, moat_width-1, -moat_depth, moat_width-1, block.WATER)
     # Replace the ground under the castle
-    mc.setBlocks(-islandwidth, -1, -islandwidth, islandwidth, -moatdepth, islandwidth, block.DIRT)
-    mc.setBlocks(-islandwidth, 0, -islandwidth, islandwidth, 0, islandwidth, block.GRASS)
+    mc.setBlocks(-island_width, -1, -island_width, island_width, -moat_depth, island_width, block.DIRT)
+    mc.setBlocks(-island_width, 0, -island_width, island_width, 0, island_width, block.GRASS)
     # Place planking through castle and over moat
-    mc.setBlocks(5, 0, -1, moatwidth, 0, 1, block.WOOD_PLANKS)
+    mc.setBlocks(5, 0, -1, moat_width, 0, 1, block.WOOD_PLANKS)
 
 
-def create_keep(size=5, baseheight=0, levels=4):
+def create_keep(size=5, base_height=0, levels=4):
 
     height = (levels * 5) + 5
 
-    create_walls(size, baseheight, height)
+    create_walls(size, base_height, height)
 
     # Floors & Windows
     for level in range(1, levels + 1):
-        mc.setBlocks(-size + 1, (level * 5) + baseheight, -size + 1, size - 1, (level * 5) + baseheight, size - 1,
+        mc.setBlocks(-size + 1, (level * 5) + base_height, -size + 1, size - 1, (level * 5) + base_height, size - 1,
                      block.WOOD_PLANKS)
 
     # Windows
     for level in range(1, levels + 1):
-        create_windows(0, (level * 5) + baseheight + 2, size, "N")
-        create_windows(0, (level * 5) + baseheight + 2, -size, "S")
-        create_windows(-size, (level * 5) + baseheight + 2, 0, "W")
-        create_windows(size, (level * 5) + baseheight + 2, 0, "E")
+        create_windows(0, (level * 5) + base_height + 2, size, "N")
+        create_windows(0, (level * 5) + base_height + 2, -size, "S")
+        create_windows(-size, (level * 5) + base_height + 2, 0, "W")
+        create_windows(size, (level * 5) + base_height + 2, 0, "E")
 
     # Door
-    mc.setBlocks(0, baseheight + 1, size, 0, baseheight + 2, size, block.AIR)
-    mc.setBlock(0, baseheight + 1, size, block.DOOR_WOOD.withData(3))
-    mc.setBlock(0, baseheight + 2, size, block.DOOR_WOOD.withData(8))
+    mc.setBlocks(0, base_height + 1, size, 0, base_height + 2, size, block.AIR)
+    mc.setBlock(0, base_height + 1, size, block.DOOR_WOOD.withData(3))
+    mc.setBlock(0, base_height + 2, size, block.DOOR_WOOD.withData(8))
 
     # Replace ladder
     mc.setBlocks(-4, 1, 0, -4, 25, 0, block.AIR)
