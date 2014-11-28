@@ -219,9 +219,9 @@ class ExplodingBlock(Thread):
         # The blast
         while blasts:
             x, y, z = blasts.pop(0)
-            for bxo in xrange(blast_radius * -1, blast_radius):
-                for byo in xrange(blast_radius * -1, blast_radius):
-                    for bzo in xrange(blast_radius * -1, blast_radius):
+            for bxo in xrange(-blast_radius, blast_radius):
+                for byo in xrange(-blast_radius, blast_radius):
+                    for bzo in xrange(-blast_radius, blast_radius):
                         if bxo ** 2 + byo ** 2 + bzo ** 2 < blast_radius ** 2:
                             bx, by, bz = x + bxo, y + byo, z + bzo
                             conn.setBlock(bx, by, bz, block.AIR)
