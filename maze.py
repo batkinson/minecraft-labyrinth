@@ -2,8 +2,8 @@
 from random import choice
 
 NORTH, SOUTH, EAST, WEST = 'N', 'S', 'E', 'W'
-directions = [NORTH, SOUTH, EAST, WEST]
-opposing_direction = {NORTH: SOUTH, SOUTH: NORTH, EAST: WEST, WEST: EAST}
+DIRECTIONS = [NORTH, SOUTH, EAST, WEST]
+OPPOSING_DIRECTIONS = {NORTH: SOUTH, SOUTH: NORTH, EAST: WEST, WEST: EAST}
 
 
 class Cell(object):
@@ -11,14 +11,14 @@ class Cell(object):
     def __init__(self, row, col, maze):
         self.row, self.col = row, col
         self.maze = maze
-        self.walls = dict([(d, True) for d in directions])
+        self.walls = dict([(d, True) for d in DIRECTIONS])
         self.offsets = {NORTH: (0, -1), SOUTH: (0, 1), EAST: (1, 0), WEST: (-1, 0)}
         self._adjacent_cells = set()
         self.adjacent_directions = dict()
 
     def init_adjacents(self):
         """Initialize the adjacent data. Only call after initializing the Maze with Cells."""
-        for d in directions:
+        for d in DIRECTIONS:
             if not self[d] is None:
                 self._adjacent_cells.add(self[d])
                 self.adjacent_directions[self[d]] = d
@@ -32,7 +32,7 @@ class Cell(object):
         """Removes the wall in the specified direction from cells on both sides."""
         self.walls[direction] = False
         if not self[direction] is None:
-            self[direction].walls[opposing_direction[direction]] = False
+            self[direction].walls[OPPOSING_DIRECTIONS[direction]] = False
 
     def can_traverse(self, direction):
         """Returns whether it is possible to go in a direction."""
@@ -53,7 +53,7 @@ class Cell(object):
 
     def __str__(self):
         result = '['
-        for d in directions:
+        for d in DIRECTIONS:
             if not self.walls[d]:
                 result += d
             else:
