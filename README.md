@@ -4,6 +4,10 @@ A program that uses the minecraft pi edition python api to build a game where
 the player has to navigate a randomly generated labyrinth to locate treasure
 held in a castle.
 
+![Screenshot 1](screenshots/screenshot1.png?raw=true)
+![Screenshot 2](screenshots/screenshot2.png?raw=true)
+![Screenshot 3](screenshots/screenshot3.png?raw=true)
+
 ## Why?
 
 When I found out that there was a simple minecraft version for the raspberry pi,
